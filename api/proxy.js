@@ -4,13 +4,22 @@ const querystring = require('querystring');
 module.exports = async (req, res) => {
   const targetUrl = 'https://childbehaviorcheckin.com';
 
+  // Handle preflight (OPTIONS) request
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Userid');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.status(200).end(); // Respond with 200 for preflight
+    return;
+  }
+
   // Parse the incoming request URL to get the query parameters
   const queryParams = querystring.stringify(req.query);
 
   try {
     const response = await axios({
       method: req.method,
-      url: `${targetUrl}?${queryParams}`,
+      url: `${targetUrl}${req.path}?${queryParams}`,
       headers: {
         ...req.headers,
         host: new URL(targetUrl).host
@@ -19,7 +28,7 @@ module.exports = async (req, res) => {
     });
 
     res.setHeader('Access-Control-Allow-Origin', '*'); // Allow CORS
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Userid');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.status(response.status).json(response.data);
   } catch (error) {
