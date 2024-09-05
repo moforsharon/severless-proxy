@@ -16,34 +16,25 @@ module.exports = async (req, res) => {
   // Parse the incoming request URL to get the query parameters
   const queryParams = querystring.stringify(req.query);
 
-  // Ensure req.path exists, and append a leading slash if necessary
-  const path = req.path.startsWith('/') ? req.path : `/${req.path}`;
-  
-  const targetFullUrl = `${targetUrl}${path}${queryParams ? `?${queryParams}` : ''}`;
-
-  console.log(`Proxying request to: ${targetFullUrl}`);
-  console.log(`Method: ${req.method}`);
-  console.log(`Headers: ${JSON.stringify(req.headers)}`);
-  console.log(`Body: ${JSON.stringify(req.body)}`);
+  // Ensure req.path exists
+  const path = req.path || '/'; // Set default if req.path is undefined
 
   try {
     const response = await axios({
       method: req.method,
-      url: targetFullUrl, // Use the constructed URL
+      url: `${targetUrl}${path}${queryParams ? `?${queryParams}` : ''}`, // Construct URL properly
       headers: {
         ...req.headers,
-        host: new URL(targetUrl).host,
+        host: new URL(targetUrl).host
       },
-      data: req.body // Only pass this if the request is a POST or PUT, not for GET
+      data: req.body
     });
 
-    // Handle successful response
     res.setHeader('Access-Control-Allow-Origin', '*'); // Allow CORS
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Userid');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.status(response.status).json(response.data);
-
   } catch (error) {
     console.error("Proxy error:", error.message); // Log the error to debug
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
