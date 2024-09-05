@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
 
   try {
     const response = await axios({
-      method: req.method,
+      method: "POST",
       url: `${targetUrl}${path}${queryParams ? `?${queryParams}` : ''}`, // Construct URL properly
       headers: {
         ...req.headers,
