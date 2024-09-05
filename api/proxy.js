@@ -1,6 +1,5 @@
 // api/proxy.js
 
-
 export default async function handler(req, res) {
   // Log the URL to see what path is being accessed
   console.log('Request URL:', req.url);
@@ -11,7 +10,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
+    'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
   );
 
   // Handle preflight requests for CORS
@@ -22,6 +21,9 @@ export default async function handler(req, res) {
 
   let url = '';
   let body = {};
+  let headers = {
+    'Content-Type': 'application/json',
+  };
 
   // Strip out the '/api/proxy' part of the URL if it exists, to properly map routes
   const path = req.url.replace('/api/proxy', '');
@@ -65,11 +67,13 @@ export default async function handler(req, res) {
         machine_id: req.body.machine_id,
         chat_id: req.body.chat_id,
       };
+      headers['Userid'] = req.headers.Userid;
       break;
 
     case '/history/delete':
       url = 'https://childbehaviorcheckin.com/back/history/delete';
       body = {}; // No request body as per your specification
+      headers['Userid'] = req.headers.Userid;
       break;
 
     case '/history/get':
@@ -77,6 +81,7 @@ export default async function handler(req, res) {
       body = {
         _id: req.body._id,
       };
+      headers['userId'] = req.headers.userId; // Add 'userid' header only for history/get
       break;
 
     default:
@@ -87,9 +92,7 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(url, {
       method: req.method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: JSON.stringify(body),
     });
 
@@ -100,7 +103,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Replace with specific origin
     res.setHeader(
       'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
+      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
     );
 
     res.status(response.status).json(data);
@@ -111,7 +114,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader(
       'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
+      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
     );
 
     res.status(500).json({ error: 'Failed to fetch data' });
