@@ -3,16 +3,18 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
+  // Set CORS headers for all requests
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Allow your specific origin
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
+  );
+
   // Handle preflight requests for CORS
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Replace * with specific origin if needed
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
-    );
-    res.status(200).end();
+    res.status(200).end(); // Respond with a 200 OK status for preflight checks
     return;
   }
 
@@ -43,7 +45,7 @@ export default async function handler(req, res) {
       url = 'https://childbehaviorcheckin.com/back/users/google';
       body = {
         email_id: req.body.email_id,
-        plan_name: req.body.plan_name || "free",
+        plan_name: req.body.plan_name || 'free',
         machine_id: req.body.machine_id,
       };
       break;
@@ -53,7 +55,7 @@ export default async function handler(req, res) {
       body = {
         _id: req.body._id,
         question: req.body.question,
-        status: req.body.status || "complete",
+        status: req.body.status || 'complete',
         response: req.body.response,
         machine_id: req.body.machine_id,
         chat_id: uuidv4(),
@@ -73,13 +75,6 @@ export default async function handler(req, res) {
       break;
 
     default:
-      res.setHeader('Access-Control-Allow-Credentials', true);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-      res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
-      );
       res.status(404).json({ message: 'Endpoint not found' });
       return;
   }
@@ -94,15 +89,6 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin'
-    );
-
     res.status(response.status).json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch data' });
