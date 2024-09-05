@@ -1,6 +1,5 @@
 // api/proxy.js
 
-import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
   // Log the URL to see what path is being accessed
@@ -64,7 +63,7 @@ export default async function handler(req, res) {
         status: req.body.status || 'complete',
         response: req.body.response,
         machine_id: req.body.machine_id,
-        chat_id: uuidv4(),
+        chat_id: req.body.chat_id,
       };
       break;
 
