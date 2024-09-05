@@ -1,42 +1,22 @@
-const axios = require('axios');
-const querystring = require('querystring');
+// api/proxy.js
 
-module.exports = async (req, res) => {
-  const targetUrl = 'https://childbehaviorcheckin.com';
-
-  // Handle preflight (OPTIONS) request
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Userid');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.status(200).end(); // Respond with 200 for preflight
-    return;
-  }
-
-  // Parse the incoming request URL to get the query parameters
-  const queryParams = querystring.stringify(req.query);
-
-  // Ensure req.path exists
-  const path = req.path || '/'; // Set default if req.path is undefined
-
-  try {
-    const response = await axios({
-      method: "POST",
-      url: `${targetUrl}${path}${queryParams ? `?${queryParams}` : ''}`, // Construct URL properly
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    const response = await fetch('https://childbehaviorcheckin.com/back/users', {
+      method: 'POST',
       headers: {
-        ...req.headers,
-        host: new URL(targetUrl).host
+        'Content-Type': 'application/json',
       },
-      data: req.body
+      body: JSON.stringify({
+        email_id: req.body.email_id,
+        password: req.body.password,
+        plan_name: req.body.plan_name
+      }),
     });
 
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow CORS
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Userid');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    console.error("Proxy error:", error.message); // Log the error to debug
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } else {
+    res.status(405).json({ message: 'Only POST method is allowed' });
   }
-};
+}
