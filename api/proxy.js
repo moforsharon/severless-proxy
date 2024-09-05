@@ -3,6 +3,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
+  // Log the URL to see what path is being accessed
+  console.log('Request URL:', req.url);
+
   // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Allow your specific origin
@@ -21,9 +24,12 @@ export default async function handler(req, res) {
   let url = '';
   let body = {};
 
+  // Strip out the '/api/proxy' part of the URL if it exists, to properly map routes
+  const path = req.url.replace('/api/proxy', '');
+
   // Determine the request path and handle accordingly
-  switch (req.url) {
-    case '/api/proxy/signup':
+  switch (path) {
+    case '/signup':
       url = 'https://childbehaviorcheckin.com/back/users';
       body = {
         email_id: req.body.email_id,
@@ -32,7 +38,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/api/proxy/login':
+    case '/login':
       url = 'https://childbehaviorcheckin.com/back/users/login';
       body = {
         email_id: req.body.email_id,
@@ -41,7 +47,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/api/proxy/google-login':
+    case '/google-login':
       url = 'https://childbehaviorcheckin.com/back/users/google';
       body = {
         email_id: req.body.email_id,
@@ -50,7 +56,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/api/proxy/history':
+    case '/history':
       url = 'https://childbehaviorcheckin.com/back/history';
       body = {
         _id: req.body._id,
@@ -62,12 +68,12 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/api/proxy/history/delete':
+    case '/history/delete':
       url = 'https://childbehaviorcheckin.com/back/history/delete';
       body = {}; // No request body as per your specification
       break;
 
-    case '/api/proxy/history/get':
+    case '/history/get':
       url = 'https://childbehaviorcheckin.com/back/history/get';
       body = {
         _id: req.body._id,
