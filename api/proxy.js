@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Allow your specific origin
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow your specific origin
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -100,7 +100,7 @@ export default async function handler(req, res) {
 
     // Set CORS headers for the actual response
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Replace with specific origin
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with specific origin
     res.setHeader(
       'Access-Control-Allow-Headers',
       'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
   } catch (error) {
     // Set CORS headers for errors as well
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', 'https://cbc-one.vercel.app'); // Replace with specific origin
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with specific origin
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader(
       'Access-Control-Allow-Headers',
