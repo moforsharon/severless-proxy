@@ -61,14 +61,14 @@ export default async function handler(req, res) {
     case '/history':
       url = 'https://childbehaviorcheckin.com/back/history';
       body = {
-        _id: req.body._id,
+        _id: "6593bc7a65e63b8aec728732",
         question: req.body.question,
         status: req.body.status || 'complete',
         response: req.body.response,
         machine_id: req.body.machine_id,
         chat_id: req.body.chat_id,
       };
-      headers['Userid'] = req.headers.Userid;
+      headers['user_id'] = req.headers.Userid;
       break;
 
     case '/history/delete':
