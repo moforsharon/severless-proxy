@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     case '/history/get':
       url = 'https://childbehaviorcheckin.com/back/history/get';
       body = {
-        _id: req.body._id,
+        _id: "6593bc7a65e63b8aec728732",
       };
       headers['userId'] = req.headers.userId; // Add 'userid' header only for history/get
       break;
