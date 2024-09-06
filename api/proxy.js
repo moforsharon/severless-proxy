@@ -66,7 +66,7 @@ export default async function handler(req, res) {
         status: req.body.status || 'complete',
         response: req.body.response,
         machine_id: req.body.machine_id,
-        chat_id: uuidv4(),
+        chat_id: req.body.chat_id,
       };
       headers['Userid'] = req.headers.Userid;
       break;
