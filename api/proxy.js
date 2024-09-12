@@ -68,13 +68,13 @@ export default async function handler(req, res) {
         machine_id: req.body.machine_id,
         chat_id: req.body.chat_id,
       };
-      headers['user_id'] = req.headers.Userid;
+      headers['userid'] = req.headers.userid;
       break;
 
     case '/history/delete':
       url = 'https://childbehaviorcheckin.com/back/history/delete';
       body = {}; // No request body as per your specification
-      headers['Userid'] = req.headers.Userid;
+      headers['userid'] = req.headers.userid;
       break;
 
     case '/history/get':
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       body = {
         _id: "6593bc7a65e63b8aec728732",
       };
-      headers['userId'] = req.headers.userId; // Add 'userid' header only for history/get
+      headers['userid'] = req.headers.userid; // Add 'userid' header only for history/get
       break;
 
     default:
