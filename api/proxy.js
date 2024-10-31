@@ -27,7 +27,8 @@ export default async function handler(req, res) {
   };
 
   // Strip out the '/api/proxy' part of the URL if it exists, to properly map routes
-  const path = req.url.replace('/api/proxy', '');
+  // const path = req.url.replace('/api/proxy', '');
+  const path = req.url.replace(/\/api\/proxy\/|\?.*/g, '');
 
   // Determine the request path and handle accordingly
   switch (path) {
@@ -35,6 +36,7 @@ export default async function handler(req, res) {
       // Handle the Google Drive PDF request
       const fileId = req.query.id;
       url = `https://drive.google.com/uc?export=download&id=${fileId}`;
+      headers = { 'Content-Type': 'application/pdf' }; // Reset headers for PDF response
       break;
     }
     case '/signup':
