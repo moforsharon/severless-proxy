@@ -107,7 +107,9 @@ export default async function handler(req, res) {
     });
 
     if (path === 'pdf') {
-      const buffer = await response.buffer();
+      // Use arrayBuffer instead of buffer
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(200).send(buffer);
