@@ -31,6 +31,24 @@ export default async function handler(req, res) {
 
   // Determine the request path and handle accordingly
   switch (path) {
+      case '/pdf': {
+        // Handle the Google Drive PDF request
+        const fileId = req.query.id;
+        const pdfUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+  
+        try {
+          const response = await fetch(pdfUrl);
+          const buffer = await response.buffer();
+  
+          // Set the response headers for the PDF
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.status(200).send(buffer);
+        } catch (error) {
+          res.status(500).json({ error: 'Failed to fetch PDF from Google Drive' });
+        }
+        return;
+      }
     case '/signup':
       url = 'https://childbehaviorcheckin.com/back/users';
       body = {
