@@ -1,8 +1,7 @@
-// api/proxy.js
 import { v4 as uuidv4 } from 'uuid';
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  // Log the URL to see what path is being accessed
   console.log('Request URL:', req.url);
 
   // Set CORS headers for all requests
@@ -26,20 +25,19 @@ export default async function handler(req, res) {
     'Content-Type': 'application/json',
   };
 
-  // Strip out the '/api/proxy' part of the URL if it exists, to properly map routes
-  // const path = req.url.replace('/api/proxy', '');
+  // Extract the base path without query parameters
   const path = req.url.replace(/\/api\/proxy\/|\?.*/g, '');
 
   // Determine the request path and handle accordingly
   switch (path) {
-    case '/pdf': {
+    case 'pdf': {
       // Handle the Google Drive PDF request
       const fileId = req.query.id;
       url = `https://drive.google.com/uc?export=download&id=${fileId}`;
       headers = { 'Content-Type': 'application/pdf' }; // Reset headers for PDF response
       break;
     }
-    case '/signup':
+    case 'signup':
       url = 'https://childbehaviorcheckin.com/back/users';
       body = {
         email_id: req.body.email_id,
@@ -48,7 +46,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/login':
+    case 'login':
       url = 'https://childbehaviorcheckin.com/back/users/login';
       body = {
         email_id: req.body.email_id,
@@ -57,7 +55,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/google-login':
+    case 'google-login':
       url = 'https://childbehaviorcheckin.com/back/users/google';
       body = {
         email_id: req.body.email_id,
@@ -66,7 +64,7 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/history':
+    case 'history':
       url = 'https://childbehaviorcheckin.com/back/history';
       body = {
         _id: "6593bc7a65e63b8aec728732",
@@ -79,21 +77,22 @@ export default async function handler(req, res) {
       headers['userid'] = req.headers.userid;
       break;
 
-    case '/history/delete':
+    case 'history/delete':
       url = 'https://childbehaviorcheckin.com/back/history/delete';
       body = {}; // No request body as per your specification
       headers['userid'] = req.headers.userid;
       break;
 
-    case '/history/get':
+    case 'history/get':
       url = 'https://childbehaviorcheckin.com/back/history/get';
       body = {
         _id: "6593bc7a65e63b8aec728732",
       };
-      headers['userid'] = req.headers.userid; // Add 'userid' header only for history/get
+      headers['userid'] = req.headers.userid;
       break;
 
     default:
+      console.log(`Unmatched path: ${path}`); // Log the unmatched path
       res.status(404).json({ message: 'Endpoint not found' });
       return;
   }
@@ -102,20 +101,27 @@ export default async function handler(req, res) {
     const response = await fetch(url, {
       method: req.method,
       headers: headers,
-      body: JSON.stringify(body),
+      body: path !== 'pdf' ? JSON.stringify(body) : undefined,
     });
 
-    const data = await response.json();
+    if (path === 'pdf') {
+      const buffer = await response.buffer();
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(200).send(buffer);
+    } else {
+      const data = await response.json();
 
-    // Set CORS headers for the actual response
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with specific origin
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
-    );
+      // Set CORS headers for the actual response
+      res.setHeader('Access-Control-Allow-Credentials', true);
+      res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with specific origin
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
+      );
 
-    res.status(response.status).json(data);
+      res.status(response.status).json(data);
+    }
   } catch (error) {
     // Set CORS headers for errors as well
     res.setHeader('Access-Control-Allow-Credentials', true);
