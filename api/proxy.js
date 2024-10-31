@@ -1,5 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
-import fetch from 'node-fetch';
+import axios from 'axios';
 
 export default async function handler(req, res) {
   console.log('Request URL:', req.url);
@@ -98,29 +97,20 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(url, {
+    const response = await axios({
+      url,
       method: req.method,
-      headers: headers,
-      body: path !== 'pdf' ? JSON.stringify(body) : undefined,
+      headers,
+      data: path !== 'pdf' ? body : undefined,
+      responseType: path === 'pdf' ? 'arraybuffer' : 'json', // Handle binary data for PDF
     });
 
     if (path === 'pdf') {
-      const buffer = await response.buffer();
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.status(200).send(buffer);
+      res.status(200).send(response.data); // Send the PDF binary data
     } else {
-      const data = await response.json();
-
-      // Set CORS headers for the actual response
-      res.setHeader('Access-Control-Allow-Credentials', true);
-      res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with specific origin
-      res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
-      );
-
-      res.status(response.status).json(data);
+      res.status(response.status).json(response.data); // Send JSON response for other cases
     }
   } catch (error) {
     // Set CORS headers for errors as well
