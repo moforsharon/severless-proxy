@@ -134,6 +134,6 @@ export default async function handler(req, res) {
       'X-CSRF-Token, X-Requested-With, Authorization, Content-Type, Accept, Origin, Userid'
     );
 
-    res.status(500).json({ error: 'Failed to fetch data' });
+    res.status(500).json({ error: 'Failed to fetch data', details: error.message  });
   }
 }
