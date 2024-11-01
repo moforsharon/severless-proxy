@@ -39,6 +39,12 @@ export default async function handler(req, res) {
       headers = { 'Content-Type': 'application/pdf' }; // Reset headers for PDF response
       break;
     }
+    case 'video': {
+      const fileId = req.query.id;
+      url = `https://drive.google.com/uc?export=download&id=${fileId}`;
+      headers = { 'Content-Type': 'video/mp4' };
+      break;
+    }
     case '/signup':
       url = 'https://childbehaviorcheckin.com/back/users';
       body = {
@@ -103,14 +109,14 @@ export default async function handler(req, res) {
     const response = await fetch(url, {
       method: req.method,
       headers: headers,
-      body: path !== 'pdf' ? JSON.stringify(body) : undefined,
+      body: path !== 'pdf' && path !== 'video' ? JSON.stringify(body) : undefined,
     });
 
-    if (path === 'pdf') {
+    if (path === 'pdf' || path === 'video') {
       // Use arrayBuffer instead of buffer
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Type', headers['Content-Type']);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(200).send(buffer);
     } else {
