@@ -45,8 +45,9 @@ export default async function handler(req, res) {
       headers = { 'Content-Type': 'video/mp4' };
       break;
     }
-    case '/signup':
-      url = 'https://childbehaviorcheckin.com/back/users';
+    case 'signup':
+      // url = 'https://childbehaviorcheckin.com/back/users';
+      url = 'http://165.227.154.82:30007/back/users';
       body = {
         email_id: req.body.email_id,
         password: req.body.password,
@@ -54,8 +55,9 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/login':
-      url = 'https://childbehaviorcheckin.com/back/users/login';
+    case 'login':
+      // url = 'https://childbehaviorcheckin.com/back/users/login';
+      url = 'http://165.227.154.82:30007/back/users/login';
       body = {
         email_id: req.body.email_id,
         password: req.body.password,
@@ -63,8 +65,9 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/google-login':
-      url = 'https://childbehaviorcheckin.com/back/users/google';
+    case 'google-login':
+      // url = 'https://childbehaviorcheckin.com/back/users/google';
+      url = 'http://165.227.154.82:30007/back/users/google';
       body = {
         email_id: req.body.email_id,
         plan_name: req.body.plan_name || 'free',
@@ -72,8 +75,9 @@ export default async function handler(req, res) {
       };
       break;
 
-    case '/history':
-      url = 'https://childbehaviorcheckin.com/back/history';
+    case 'history':
+      // url = 'https://childbehaviorcheckin.com/back/history';
+      url = 'http://165.227.154.82:30007/back/history';
       body = {
         _id: "6593bc7a65e63b8aec728732",
         question: req.body.question,
@@ -85,14 +89,15 @@ export default async function handler(req, res) {
       headers['userid'] = req.headers.userid;
       break;
 
-    case '/history/delete':
+    case 'history/delete':
       url = 'https://childbehaviorcheckin.com/back/history/delete';
       body = {}; // No request body as per your specification
       headers['userid'] = req.headers.userid;
       break;
 
-    case '/history/get':
-      url = 'https://childbehaviorcheckin.com/back/history/get';
+    case 'history/get':
+      // url = 'https://childbehaviorcheckin.com/back/history/get';
+      url = 'http://165.227.154.82:30007/back/history/get';
       body = {
         _id: "6593bc7a65e63b8aec728732",
       };
