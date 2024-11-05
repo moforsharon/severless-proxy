@@ -55,6 +55,14 @@ export default async function handler(req, res) {
       };
       break;
 
+      case 'generic/assistant':
+        url = 'http://104.248.37.74:30008/generic/assistant';
+        body = {
+          question: req.body.question,
+          history: req.body.history
+        };
+        break;
+
     case 'login':
       // url = 'https://childbehaviorcheckin.com/back/users/login';
       url = 'http://165.227.154.82:30007/back/users/login';
